@@ -18,4 +18,5 @@ public class MedicationReq {
     private Double price;
     private String expirationDate;
     private String sideEffects;
+    private String imagePath;
 }

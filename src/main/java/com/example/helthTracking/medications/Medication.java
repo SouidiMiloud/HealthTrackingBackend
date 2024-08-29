@@ -24,11 +24,12 @@ public class Medication {
     private Double price;
     private LocalDate expirationDate;
     private String sideEffects;
+    private String imagePath;
 
 
     public Medication(Long patientId, String name, String dosage, MedicationForm form,
                       String frequency, String manufacturer, Double price,
-                      LocalDate expirationDate, String sideEffects) {
+                      LocalDate expirationDate, String sideEffects, String imagePath) {
 
         this.patientId = patientId;
         this.name = name;
@@ -39,5 +40,6 @@ public class Medication {
         this.price = price;
         this.expirationDate = expirationDate;
         this.sideEffects = sideEffects;
+        this.imagePath = imagePath;
     }
 }

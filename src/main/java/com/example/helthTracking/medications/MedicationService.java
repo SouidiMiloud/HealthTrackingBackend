@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -28,25 +27,10 @@ public class MedicationService {
                 request.getManufacturer(),
                 request.getPrice(),
                 LocalDate.parse(request.getExpirationDate()),
-                request.getSideEffects())
+                request.getSideEffects(),
+                request.getImagePath()
+                )
         );
-    }
-
-    public Medication updateMedication(Long medicationId, Medication medicationDetails){
-        Medication medication = medicationRepo.findById(medicationId)
-                .orElseThrow(() -> new RuntimeException("Medication not found"));
-
-        medication.setPatientId(medicationDetails.getPatientId());
-        medication.setName(medicationDetails.getName());
-        medication.setDosage(medicationDetails.getDosage());
-        medication.setForm(medicationDetails.getForm());
-        medication.setFrequency(medicationDetails.getFrequency());
-        medication.setManufacturer(medicationDetails.getManufacturer());
-        medication.setPrice(medicationDetails.getPrice());
-        medication.setExpirationDate(medicationDetails.getExpirationDate());
-        medication.setSideEffects(medicationDetails.getSideEffects());
-
-        return medicationRepo.save(medication);
     }
 
     public void deleteMedication(Long medicationId){
@@ -54,5 +38,11 @@ public class MedicationService {
                 .orElseThrow(() -> new RuntimeException("Medication not found"));
 
         medicationRepo.delete(medication);
+    }
+
+    public Medication getMedication(Long id) {
+
+        return medicationRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Medication not found"));
     }
 }
