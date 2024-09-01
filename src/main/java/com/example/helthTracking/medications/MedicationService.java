@@ -1,5 +1,7 @@
 package com.example.helthTracking.medications;
 
+import com.example.helthTracking.user.AppUser;
+import com.example.helthTracking.user.AppUserRole;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +14,13 @@ import java.util.List;
 public class MedicationService {
     private final MedicationRepo medicationRepo;
 
-    public List<Medication> getMedicationsForPatients(Long patientId){
-        return medicationRepo.findByPatientId(patientId);
+    public List<Medication> getMedicationsForPatients(AppUser user, Long patientId){
+        if(user.getAppUserRole() == AppUserRole.DOCTOR)
+            return medicationRepo.findByPatientId(patientId);
+        return medicationRepo.findByPatientId(user.getId());
     }
 
     public Medication addMedication(Long patientId, MedicationReq request){
-
         return medicationRepo.save(new Medication(
                 patientId,
                 request.getName(),

@@ -1,7 +1,11 @@
 package com.example.helthTracking.medications;
 
+import com.example.helthTracking.user.AppUser;
+import com.example.helthTracking.user.AppUserRole;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,22 +43,27 @@ public class MedicationController {
         }
     }
     @GetMapping
-    public ResponseEntity<List<Medication>> getMedications(@PathVariable Long patientId){
-        return ResponseEntity.ok(medicationService.getMedicationsForPatients(patientId));
+    public ResponseEntity<List<Medication>> getMedications(@AuthenticationPrincipal AppUser user, @PathVariable Long patientId){
+        return ResponseEntity.ok(medicationService.getMedicationsForPatients(user, patientId));
     }
 
     @PostMapping
-    public ResponseEntity<Medication> addMedication(@PathVariable Long patientId,
+    public ResponseEntity<Medication> addMedication(@AuthenticationPrincipal AppUser user, @PathVariable Long patientId,
                                                     @RequestBody MedicationReq medication){
-        return ResponseEntity.ok(medicationService.addMedication(patientId, medication));
+        if(user.getAppUserRole() == AppUserRole.DOCTOR)
+            return ResponseEntity.ok(medicationService.addMedication(patientId, medication));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @DeleteMapping("/{medicationId}")
-    public ResponseEntity<Void> deleteMedication(@PathVariable Long patientId,
+    public ResponseEntity<Void> deleteMedication(@AuthenticationPrincipal AppUser user, @PathVariable Long patientId,
                                                  @PathVariable Long medicationId){
 
-        medicationService.deleteMedication(medicationId);
-        return ResponseEntity.noContent().build();
+        if(user.getAppUserRole() == AppUserRole.DOCTOR) {
+            medicationService.deleteMedication(medicationId);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping("{id}")
